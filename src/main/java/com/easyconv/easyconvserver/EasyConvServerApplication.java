@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class EasyconvServerApplication {
+public class EasyConvServerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EasyconvServerApplication.class, args);
+        SpringApplication.run(EasyConvServerApplication.class, args);
     }
 
 }
