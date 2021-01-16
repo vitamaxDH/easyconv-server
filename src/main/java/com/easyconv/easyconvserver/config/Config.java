@@ -2,6 +2,7 @@ package com.easyconv.easyconvserver.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -10,12 +11,17 @@ import org.springframework.core.env.Environment;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@PropertySource("classpath:test.properties")
-public class ConfigUtil {
+@PropertySource("classpath:resource.properties")
+public class Config {
 
-    private final Environment environment;
+    private static Environment environment;
 
-    public String getProperty(String key){
+    @Autowired
+    public Config(Environment environment) {
+        this.environment = environment;
+    }
+
+    public static String getProperty(String key){
         return environment.getProperty(key);
     }
 
