@@ -1,24 +1,47 @@
 package com.easyconv.easyconvserver.core.util;
 
+import com.easyconv.easyconvserver.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
-import org.springframework.web.multipart.MultipartFile;
+import org.apache.tika.io.FilenameUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
 
 @Slf4j
 public class FileUtils {
 
-    public final static Tika TIKA = new Tika();
+    public static final Tika TIKA = new Tika();
+    private static final String FORMAT_YYYYMMDD = replaceWithOSSeparator("yyyy/MM/dd");
+    private static final String TEMP_PATH = replaceWithOSSeparator(Config.getProperty("com.easyconv.pdf.file.output"));
 
-    public static File convertMultipartFileToFile(MultipartFile multipartFile){
-        // TODO 추가 로직 필요
-        return new File("");
+    public static File createFile(String filePath) throws IOException {
+        return createFile(filePath, false);
+    }
+
+    public static File createFile(String filePath, boolean fromToday) throws IOException {
+        Objects.requireNonNull(filePath);
+        File newFile = fromToday ? createFileToday(FilenameUtils.getName(filePath)) : new File(TEMP_PATH + filePath);
+        if (!newFile.exists()){
+            Files.createDirectories(newFile.getParentFile().toPath());
+        }
+        return newFile;
+    }
+
+    private static File createFileToday(String fileName){
+        SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_YYYYMMDD);
+        return new File(TEMP_PATH + sdf.format(new Date()) + File.separator + fileName);
     }
 
     public static byte[] readFileToByteArray(final File file) throws IOException {
         return org.apache.commons.io.FileUtils.readFileToByteArray(file);
     }
 
+    private static String replaceWithOSSeparator(String filePath){
+        return filePath.replace("/" , File.separator);
+    }
 }
