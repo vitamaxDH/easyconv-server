@@ -1,0 +1,3 @@
+[submodule "easyconv-client"]
+	path = easyconv-client
+	url = https://github.com/vitamaxDH/easyconv-client.git
