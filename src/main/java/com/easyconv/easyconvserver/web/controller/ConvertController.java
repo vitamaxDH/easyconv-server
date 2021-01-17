@@ -5,7 +5,7 @@ import com.itextpdf.text.DocumentException;
 import com.sun.istack.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,8 +26,8 @@ public class ConvertController {
     private final PdfConvertService pdfConvertService;
 
     @PostMapping(value = {"", "/"}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ByteArrayResource> convertAndSend(@NotNull MultipartFile multipartFile, HttpServletRequest req, HttpServletResponse res) throws IOException, DocumentException {
-        return ResponseEntity.ok().body(pdfConvertService.convertAsByteArrayResource(multipartFile));
+    public ResponseEntity<? extends Resource> convertAndSend(@NotNull MultipartFile multipartFile, HttpServletRequest req, HttpServletResponse res) throws IOException, DocumentException {
+        return pdfConvertService.getByteArrayResource(multipartFile);
     }
 
 }

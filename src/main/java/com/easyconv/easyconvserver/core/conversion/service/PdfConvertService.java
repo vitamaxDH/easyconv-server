@@ -3,12 +3,18 @@ package com.easyconv.easyconvserver.core.conversion.service;
 import com.documents4j.api.DocumentType;
 import com.documents4j.api.IConverter;
 import com.documents4j.job.LocalConverter;
-import com.easyconv.easyconvserver.config.Config;
+import com.easyconv.easyconvserver.core.util.ExtensionType;
 import com.easyconv.easyconvserver.core.util.FileUtils;
+import com.easyconv.easyconvserver.core.util.MimeTypeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -23,8 +29,6 @@ import static com.easyconv.easyconvserver.core.util.FileUtils.TIKA;
 @Service
 public class PdfConvertService implements Convertable {
 
-    private final String EXT_PDF = ".pdf";
-
     @Override
     public void convert(File inputFile) throws IOException {
     }
@@ -38,7 +42,7 @@ public class PdfConvertService implements Convertable {
     }
 
     public byte[] convertAsByteArray(MultipartFile inputFile) throws IOException {
-        File outputFile = FileUtils.createFile(inputFile.getName() + EXT_PDF, Boolean.TRUE);
+        File outputFile = FileUtils.createFile(inputFile.getName() + ExtensionType.PDF_WITH_DOT, Boolean.TRUE);
         try  (
                 OutputStream outputStream = new FileOutputStream(outputFile);
         ){
@@ -61,19 +65,41 @@ public class PdfConvertService implements Convertable {
         return DocumentTypes.getDocumentType(mimeType);
     }
 
+    public ResponseEntity<? extends Resource> getByteArrayResource(MultipartFile multipartFile) throws IOException {
+        Resource resource = convertAsByteArrayResource(multipartFile);
+
+        // Try to determine file's content type
+        String contentType = null;
+        try {
+            contentType = TIKA.detect(multipartFile.getInputStream());
+        } catch (IOException ex) {
+            log.info("Could not determine file type.");
+        }
+
+        // Fallback to the default content type if type could not be determined
+        if(contentType == null) {
+            contentType = MimeTypeUtils.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(contentType))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+
     enum DocumentTypes {
-        DOCX("application/msword", DocumentType.MS_WORD),
-        DOC("application/vnd.openxmlformats-officedocument.wordprocessingml.document", DocumentType.MS_WORD),
-        XLSX("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", DocumentType.MS_EXCEL),
-        EXCEL("application/vnd.com.documents4j.any-msexcel", DocumentType.MS_EXCEL),
-        XLS("application/vnd.ms-excel", DocumentType.MS_EXCEL),
-        CSV("text/csv", DocumentType.CSV),
-        AXML("application/xml", DocumentType.XML),
-        TXML("text/xml", DocumentType.XML),
-        HTML("text/html", DocumentType.HTML),
-        PDF("application/pdf", DocumentType.PDF),
-        PDFA("html", DocumentType.PDFA),
-        TEXT("text/plain", DocumentType.TEXT),
+        DOCX(MimeTypeUtils.APPLICATION_MSWORD_VALUE, DocumentType.MS_WORD),
+        DOC(MimeTypeUtils.APPLICATION_VND_MSWORD_VALUE, DocumentType.MS_WORD),
+        XLSX(MimeTypeUtils.APPLICATION_VND_SPREADSHEETML_VALUE, DocumentType.MS_EXCEL),
+        EXCEL(MimeTypeUtils.APPLICATION_VND_ANY_MSEXCEL_VALUE, DocumentType.MS_EXCEL),
+        XLS(MimeTypeUtils.APPLICATION_VND_MSEXCEL_VALUE, DocumentType.MS_EXCEL),
+        CSV(MimeTypeUtils.TEXT_CSV_VALUE, DocumentType.CSV),
+        AXML(MimeTypeUtils.APPLICATION_XML_VALUE, DocumentType.XML),
+        TXML(MimeTypeUtils.TEXT_XML_VALUE, DocumentType.XML),
+        HTML(MimeTypeUtils.TEXT_HTML_VALUE, DocumentType.HTML),
+        XHTML(MimeTypeUtils.APPLICATION_XHTML_XML_VALUE, DocumentType.HTML),
+        PDF(MimeTypeUtils.APPLICATION_PDF_VALUE, DocumentType.PDF),
+        TEXT(MimeTypeUtils.TEXT_PLAIN_VALUE, DocumentType.TEXT),
         ;
         private String mimeType;
         private DocumentType documentType;
