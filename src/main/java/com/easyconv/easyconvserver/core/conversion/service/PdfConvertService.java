@@ -7,6 +7,7 @@ import com.easyconv.easyconvserver.config.Config;
 import com.easyconv.easyconvserver.core.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +23,7 @@ import static com.easyconv.easyconvserver.core.util.FileUtils.TIKA;
 @Service
 public class PdfConvertService implements Convertable {
 
-    private final String TEMP_PATH = Config.getProperty("com.easyconv.pdf.file.path");
+    private final String EXT_PDF = ".pdf";
 
     @Override
     public void convert(File inputFile) throws IOException {
@@ -32,8 +33,12 @@ public class PdfConvertService implements Convertable {
     public void convert(MultipartFile inputFile) throws IOException {
     }
 
-    public byte[] convertAndSend(MultipartFile inputFile) throws IOException {
-        File outputFile = new File(TEMP_PATH + "temp");
+    public ByteArrayResource convertAsByteArrayResource(MultipartFile inputFile) throws IOException {
+        return new ByteArrayResource(convertAsByteArray(inputFile));
+    }
+
+    public byte[] convertAsByteArray(MultipartFile inputFile) throws IOException {
+        File outputFile = FileUtils.createFile(inputFile.getName() + EXT_PDF, Boolean.TRUE);
         try  (
                 OutputStream outputStream = new FileOutputStream(outputFile);
         ){
