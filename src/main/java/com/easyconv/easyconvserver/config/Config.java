@@ -25,4 +25,8 @@ public class Config {
         return environment.getProperty(key);
     }
 
+    public static String getProperty(String key, String defaultValue){
+        return environment.getProperty(key, defaultValue);
+    }
+
 }
