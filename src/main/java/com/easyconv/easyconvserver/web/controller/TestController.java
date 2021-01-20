@@ -1,6 +1,6 @@
 package com.easyconv.easyconvserver.web.controller;
 
-import com.easyconv.easyconvserver.config.ConfigUtil;
+import com.easyconv.easyconvserver.config.Config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
-    private final ConfigUtil configUtil;
-
     @GetMapping("/prop/{key}")
     public ResponseEntity<?> getPropertyValue(@PathVariable String key){
 
-        String value = configUtil.getProperty(key);
+        String value = Config.getProperty(key);
 
         return ResponseEntity.ok(value);
     }
