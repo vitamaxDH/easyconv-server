@@ -43,7 +43,7 @@ public class FileUtils {
     }
 
     private static String getBasePath(){
-        return Config.getProperty("com.easyconv.pdf.file.output", "C:/easyConv/resources/output/");
+        return Config.getProperty("com.easyconv.pdf.file.output");
     }
 
 

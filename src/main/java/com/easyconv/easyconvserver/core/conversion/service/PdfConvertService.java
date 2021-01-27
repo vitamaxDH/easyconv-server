@@ -42,7 +42,7 @@ public class PdfConvertService implements Convertable {
         log.info("convert :: START");
         MultipartFile inputFile = dto.getMultipartFile();
         File outputFile = this.getOutputFile(inputFile.getOriginalFilename(), outputPath);
-
+        log.info("convert :: outputFile {}", outputFile.getAbsolutePath());
         boolean result = convert(inputFile.getInputStream(), outputFile);
         if (result){
             PdfResource resource = PdfResource.create().mapDtoToEntity(dto);
