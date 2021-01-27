@@ -9,16 +9,15 @@ import org.springframework.core.env.Environment;
 
 
 @Slf4j
-@Configuration
-@RequiredArgsConstructor
 @PropertySource("classpath:resource.properties")
 public class Config {
 
     private static Environment environment;
 
-    @Autowired
-    public Config(Environment environment) {
-        this.environment = environment;
+    public Config() {}
+
+    public static void setEnvironment(Environment environment) {
+        Config.environment = environment;
     }
 
     public static String getProperty(String key){
