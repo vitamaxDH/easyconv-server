@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 
+
+    @GetMapping("/test")
+    public String test(){
+        return "OK";
+    }
+
     @GetMapping("/prop/{key}")
     public ResponseEntity<?> getPropertyValue(@PathVariable String key){
 
