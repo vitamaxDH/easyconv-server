@@ -16,32 +16,35 @@ import java.util.Objects;
 public class FileUtils {
 
     public static final Tika TIKA = new Tika();
-    private static final String FORMAT_YYYYMMDD = replaceWithOSSeparator("yyyy/MM/dd");
-    private static final String TEMP_PATH = replaceWithOSSeparator(Config.getProperty("com.easyconv.pdf.file.output"));
+    private static final String FORMAT_YYYYMMDD = "yyyy/MM/dd";
 
     public static File createFile(String filePath) throws IOException {
         return createFile(filePath, false);
     }
 
     public static File createFile(String filePath, boolean fromToday) throws IOException {
+        String tempPath = getBasePath();
         Objects.requireNonNull(filePath);
-        File newFile = fromToday ? createFileToday(FilenameUtils.getName(filePath)) : new File(TEMP_PATH + filePath);
+        File newFile = fromToday ? createFileToday(FilenameUtils.getName(filePath)) : new File(tempPath, filePath);
         if (!newFile.exists()){
             Files.createDirectories(newFile.getParentFile().toPath());
         }
         return newFile;
     }
 
-    private static File createFileToday(String fileName){
+    public static File createFileToday(String fileName){
+        String basePath = getBasePath();
         SimpleDateFormat sdf = new SimpleDateFormat(FORMAT_YYYYMMDD);
-        return new File(TEMP_PATH + sdf.format(new Date()) + File.separator + fileName);
+        return new File(basePath + sdf.format(new Date()), fileName);
     }
 
     public static byte[] readFileToByteArray(final File file) throws IOException {
         return org.apache.commons.io.FileUtils.readFileToByteArray(file);
     }
 
-    private static String replaceWithOSSeparator(String filePath){
-        return filePath.replace("/" , File.separator);
+    private static String getBasePath(){
+        return Config.getProperty("com.easyconv.pdf.file.output", "C:/easyConv/resources/output/");
     }
+
+
 }
