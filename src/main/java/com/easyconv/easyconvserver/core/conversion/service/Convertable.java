@@ -1,13 +1,11 @@
 package com.easyconv.easyconvserver.core.conversion.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.easyconv.easyconvserver.core.dto.GenericResourceDto;
 
-import java.io.File;
 import java.io.IOException;
 
 public interface Convertable {
 
-    public void convert(File file) throws IOException;
-    public void convert(MultipartFile MultipartFile) throws IOException;
-    public void convert(String input, String output) throws IOException;
+    public GenericResourceDto convert(GenericResourceDto dto) throws IOException;
+    public GenericResourceDto convert(GenericResourceDto dto, String outputPath) throws IOException;
 }
