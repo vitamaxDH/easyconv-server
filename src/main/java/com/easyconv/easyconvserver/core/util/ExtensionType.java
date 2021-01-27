@@ -1,7 +1,16 @@
 package com.easyconv.easyconvserver.core.util;
 
-public class ExtensionType {
+public enum ExtensionType {
+    PDF("pdf"),
+    PDF_WITH_DOT(".pdf"),
+    ;
+    private final String value;
 
-    public static final String PDF_WITH_DOT = ".pdf";
+    ExtensionType(String value) {
+        this.value = value;
+    }
 
+    public String getValue() {
+        return value;
+    }
 }
