@@ -4,6 +4,7 @@ import com.easyconv.easyconvserver.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.apache.tika.io.FilenameUtils;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,5 +47,11 @@ public class FileUtils {
         return Config.getProperty("com.easyconv.pdf.file.output");
     }
 
-
+    public static boolean isExcel(String extension){
+        if (!StringUtils.hasLength(extension)){
+            log.warn("isExcel :: the given extension is null");
+            return false;
+        }
+        return extension.contains(ExtensionType.XLS.getValue());
+    }
 }
