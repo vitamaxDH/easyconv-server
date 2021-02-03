@@ -14,4 +14,4 @@ The list of supported formats. (ex)
 
 <br/>
 
-![main](file:/D:/[개인]/blog/resource/images/EasyConv.png)
+![main](./src/main/resources/static/img/etc/EasyConvMain.png)
