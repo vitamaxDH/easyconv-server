@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public interface Convertable {
 
-    public GenericResourceDto convert(GenericResourceDto dto) throws IOException;
-    public GenericResourceDto convert(GenericResourceDto dto, String outputPath) throws IOException;
+    public GenericResourceDto convert(GenericResourceDto dto) throws Throwable;
+    public GenericResourceDto convert(GenericResourceDto dto, String outputPath) throws Throwable;
 }
