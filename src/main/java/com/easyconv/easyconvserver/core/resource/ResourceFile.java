@@ -1,9 +1,10 @@
 package com.easyconv.easyconvserver.core.resource;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
+import org.springframework.core.io.ByteArrayResource;
 
 @Slf4j
 @Data
@@ -11,8 +12,7 @@ import java.io.File;
 @ToString
 public class ResourceFile {
 
-    private File resourceFile;
-    private String filePath;
+    private ByteArrayResource byteArrayResource;
 
     public static ResourceFile create(){
         return new ResourceFile();
