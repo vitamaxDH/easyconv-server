@@ -1,31 +1,20 @@
 package com.easyconv.easyconvserver.core.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Getter
+import java.io.File;
+import java.io.Serializable;
+
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenericResourceDto {
+public class GenericResourceDto implements Serializable {
 
+    private static final long serialVersionUID = 8214370405210237516L;
     private MultipartFile multipartFile;
+    private File convertedFile;
     private String ip;
 
-    public static GenericResourceDto create(){
-        return new GenericResourceDto();
-    }
-
-    public GenericResourceDto setMultipartFile(MultipartFile multipartFile) {
-        this.multipartFile = multipartFile;
-        return this;
-    }
-
-    public GenericResourceDto setIp(String ip) {
-        this.ip = ip;
-        return this;
-    }
 }
