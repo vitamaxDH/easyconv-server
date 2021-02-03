@@ -27,18 +27,20 @@ public class IndexController {
 
     @GetMapping("/index")
     public String index(){
-        return "인덱스 페이지 입니다.";
+        return "Server is on";
     }
 
     @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<GenericResourceDto> convertAndSend(@RequestBody MultipartFile multipartFile, HttpServletRequest req, HttpServletResponse res) throws IOException {
-        GenericResourceDto dto = GenericResourceDto.create()
-                                                    .setMultipartFile(multipartFile)
-                                                    .setIp(WebUtils.getIp(req));
+    public ResponseEntity<GenericResourceDto> convert(@RequestBody MultipartFile multipartFile, HttpServletRequest req, HttpServletResponse res) throws Throwable {
         log.info("convertAndSend :: multipartFile {}", multipartFile);
+
         if (ObjectUtils.isEmpty(multipartFile)){
-            return ResponseEntity.badRequest().body(dto);
+            return ResponseEntity.badRequest().body(null);
         } else {
+            GenericResourceDto dto = GenericResourceDto.builder()
+                                                    .multipartFile(multipartFile)
+                                                    .ip(WebUtils.getIp(req))
+                                                    .build();
             dto = pdfConvertService.convert(dto);
             return ResponseEntity.ok(dto);
         }
