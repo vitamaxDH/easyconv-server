@@ -37,18 +37,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class ConvertTest {
 
+    @Autowired
+    private MockMvc mockMvc;
     private static final Logger log = LoggerFactory.getLogger(ConvertTest.class);
 
     final String SAMPLE_PATH = "D:/sample/test/";
-    String fileName = "error.html";
+    String fileName = "file_example_XLS_10.xls";
     String filePath = SAMPLE_PATH + fileName;
     String pdfPath = SAMPLE_PATH + "3.pdf";
 
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private PdfConvertService pdfConvertService;
+
 
     @Test
     public void index_controller_테스트한다() throws Throwable {
@@ -97,4 +101,15 @@ public class ConvertTest {
         log.info("o == d? {}", Arrays.equals(o, o2));
     }
 
+    @Test
+    public void 엑셀_pdf_변환_테스트() throws Throwable {
+        File file = new File(SAMPLE_PATH, fileName);
+        MockMultipartFile multipartFile = new MockMultipartFile("multipartFile"
+                , fileName
+                , MediaType.MULTIPART_FORM_DATA_VALUE
+                , new FileInputStream(file));
+
+        pdfConvertService.createPdf(multipartFile);
+
+    }
 }
