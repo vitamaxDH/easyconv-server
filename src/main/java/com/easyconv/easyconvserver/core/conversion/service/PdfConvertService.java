@@ -11,15 +11,24 @@ import com.easyconv.easyconvserver.core.repository.PdfResourceRepository;
 import com.easyconv.easyconvserver.core.util.ExtensionType;
 import com.easyconv.easyconvserver.core.util.FileUtils;
 import com.easyconv.easyconvserver.core.util.MimeTypeUtils;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.FileNameUtils;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import static com.easyconv.easyconvserver.core.util.FileUtils.TIKA;
@@ -34,25 +43,34 @@ public class PdfConvertService implements Convertable {
     private final ConvertHistoryRepository convertHistoryRepository;
 
     @Override
-    public GenericResourceDto convert(GenericResourceDto dto) throws IOException {
+    public GenericResourceDto convert(GenericResourceDto dto) throws Throwable {
         return convert(dto, null);
     }
     @Override
-    public GenericResourceDto convert(GenericResourceDto dto, String outputPath) throws IOException {
+    public GenericResourceDto convert(GenericResourceDto dto, String outputPath) throws Throwable {
         log.info("convert :: START");
         MultipartFile inputFile = dto.getMultipartFile();
-        File outputFile = this.getOutputFile(inputFile.getOriginalFilename(), outputPath);
+        File outputFile = getOutputFile(outputPath, inputFile.getOriginalFilename());
         log.info("convert :: outputFile {}", outputFile.getAbsolutePath());
-        boolean result = convert(inputFile.getInputStream(), outputFile);
-        if (result){
-            PdfResource resource = PdfResource.create().mapDtoToEntity(dto);
-            ConvertHistory convertHistory = ConvertHistory.builder()
-                                                          .clientIp(dto.getIp())
-                                                          .build();
-            pdfResourceRepository.save(resource);
-            convertHistoryRepository.save(convertHistory);
+
+        String extension = FileNameUtils.getExtension(inputFile.getOriginalFilename());
+        if (FileUtils.isExcel(extension)){
+
+            createPdf(inputFile);
+            return dto;
+        } else {
+            boolean result = convert(inputFile.getInputStream(), outputFile);
+            if (result){
+                dto.setConvertedFile(outputFile);
+                PdfResource resource = PdfResource.create().mapDtoToEntity(dto);
+                ConvertHistory convertHistory = ConvertHistory.builder()
+                                                              .clientIp(dto.getIp())
+                                                              .build();
+                pdfResourceRepository.save(resource);
+                convertHistoryRepository.save(convertHistory);
+            }
+            return dto;
         }
-        return dto;
     }
 
     private boolean convert(InputStream inputStream, String outputFilePath){
@@ -77,7 +95,7 @@ public class PdfConvertService implements Convertable {
         return result;
     }
 
-    private File getOutputFile(String fileName, String outputPath) throws IOException {
+    private File getOutputFile(String outputPath, String fileName) throws IOException {
         fileName = FileNameUtils.getBaseName(fileName);
         if (ObjectUtils.isEmpty(outputPath)){
             return FileUtils.createFile(fileName + ExtensionType.PDF_WITH_DOT.getValue(), Boolean.TRUE);
@@ -96,10 +114,6 @@ public class PdfConvertService implements Convertable {
     enum DocumentTypes {
         DOCX(MimeTypeUtils.APPLICATION_MSWORD_VALUE, DocumentType.MS_WORD),
         DOC(MimeTypeUtils.APPLICATION_VND_MSWORD_VALUE, DocumentType.MS_WORD),
-        XLSX(MimeTypeUtils.APPLICATION_VND_SPREADSHEETML_VALUE, DocumentType.MS_EXCEL),
-        EXCEL(MimeTypeUtils.APPLICATION_VND_ANY_MSEXCEL_VALUE, DocumentType.MS_EXCEL),
-        XLS(MimeTypeUtils.APPLICATION_VND_MSEXCEL_VALUE, DocumentType.MS_EXCEL),
-        MSOFFICE(MimeTypeUtils.APPLICATION_X_TIKA_MSOFFICE, DocumentType.MS_EXCEL),
         CSV(MimeTypeUtils.TEXT_CSV_VALUE, DocumentType.CSV),
         AXML(MimeTypeUtils.APPLICATION_XML_VALUE, DocumentType.XML),
         TXML(MimeTypeUtils.TEXT_XML_VALUE, DocumentType.XML),
@@ -135,4 +149,75 @@ public class PdfConvertService implements Convertable {
         }
     }
 
+    public void createPdf(MultipartFile inputFile) throws Throwable {
+        createPdf(inputFile, null);
+    }
+
+    public void createPdf(MultipartFile inputFile, String outputPath) throws Throwable {
+        String fileName = FileNameUtils.getBaseName(inputFile.getOriginalFilename());
+        File outputFile = new File(outputPath, fileName);
+        if (!StringUtils.hasLength(outputPath)){
+            outputFile = getOutputFile(null, fileName);
+        }
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream(outputFile));
+        document.open();
+        readWrite(document, inputFile.getInputStream());
+        document.close();
+    }
+
+    public void readWrite(Document document, InputStream input) throws Throwable {
+        try (Workbook workbook = WorkbookFactory.create(input)) {
+            Iterator<Sheet> sheetIterator = workbook.sheetIterator();
+            int sheetnum = 0;
+            while (sheetIterator.hasNext()) {
+                Sheet sheet = sheetIterator.next();
+                workbook.getSheetAt(sheetnum);
+                sheetnum++;
+
+                DataFormatter dataFormatter = new DataFormatter();
+
+                PdfPTable table = new PdfPTable(7);
+                Paragraph p;
+                Font normal = new Font(Font.FontFamily.TIMES_ROMAN, 12);
+                boolean title = true;
+
+                for (Row row : sheet) {
+                    String cellValue;
+                    if (4 <= row.getRowNum() && row.getRowNum() <= 155) {
+                        for (Cell cell : row) {
+                            cellValue = dataFormatter.formatCellValue(cell);
+                            table.addCell(cellValue);
+                        }
+                    } else if (row.getRowNum() < 4) {
+                        for (Cell cell : row) {
+                            cellValue = dataFormatter.formatCellValue(cell);
+
+                            p = new Paragraph(cellValue, title ? normal : normal);
+                            p.setAlignment(Element.ALIGN_JUSTIFIED);
+                            document.add(p);
+                        }
+                    }
+                }
+                document.add(new Paragraph(" "));
+                float[] columnWidths = new float[]{5f, 0f, 35f, 7f, 7f, 5f, 15f};
+                table.setWidths(columnWidths);
+                table.setTotalWidth(550);
+                table.setLockedWidth(true);
+                document.add(table);
+                for (Row row : sheet) {
+                    if (row.getRowNum() >154) {
+                        for (Cell cell : row) {
+
+                            String cellValue = dataFormatter.formatCellValue(cell);
+
+                            p = new Paragraph(cellValue, title ? normal : normal);
+                            p.setAlignment(Element.ALIGN_JUSTIFIED);
+                            document.add(p);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
