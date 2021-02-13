@@ -1,9 +1,14 @@
 package com.easyconv.easyconvserver.core.lab;
 
+import com.aspose.cells.SaveFormat;
+import com.aspose.cells.Workbook;
 import com.easyconv.easyconvserver.EasyConvServerApplication;
+import com.easyconv.easyconvserver.core.conversion.service.ConverterProvider;
 import com.easyconv.easyconvserver.core.conversion.service.PdfConvertService;
+import com.easyconv.easyconvserver.core.util.ExtensionType;
 import com.easyconv.easyconvserver.core.util.FileUtils;
-import com.google.common.io.Files;
+import org.apache.commons.compress.utils.FileNameUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -22,7 +27,6 @@ import org.springframework.web.context.WebApplicationContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static com.easyconv.easyconvserver.core.util.FileUtils.TIKA;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -41,8 +45,8 @@ public class ConvertTest {
     private MockMvc mockMvc;
     private static final Logger log = LoggerFactory.getLogger(ConvertTest.class);
 
-    final String SAMPLE_PATH = "D:/sample/test/";
-    String fileName = "file_example_XLS_10.xls";
+    final String SAMPLE_PATH = "C:/easyConv/resources/input/";
+    String fileName = "202012_1.csv";
     String filePath = SAMPLE_PATH + fileName;
     String pdfPath = SAMPLE_PATH + "3.pdf";
 
@@ -52,7 +56,21 @@ public class ConvertTest {
 
     @Autowired
     private PdfConvertService pdfConvertService;
+    @Autowired
+    ConverterProvider convertConverter;
 
+    File file;
+    MockMultipartFile multipartFile;
+
+
+    @BeforeEach
+    public void setUp() throws IOException {
+        file = new File(filePath);
+        multipartFile = new MockMultipartFile("multipartFile"
+                , fileName
+                , MediaType.MULTIPART_FORM_DATA_VALUE
+                , new FileInputStream(file));
+    }
 
     @Test
     public void index_controller_테스트한다() throws Throwable {
@@ -62,17 +80,11 @@ public class ConvertTest {
                 .andReturn();
     }
 
-
     @Test
     public void convert() throws Throwable {
-        File file = new File(SAMPLE_PATH, fileName);
-        MockMultipartFile multipartFile = new MockMultipartFile("multipartFile"
-                                                , fileName
-                                                , MediaType.MULTIPART_FORM_DATA_VALUE
-                                                , new FileInputStream(file));
         this.mockMvc.perform(multipart("/api/convert").file(multipartFile))
-                    .andDo(print())
-                    .andExpect(status().is2xxSuccessful());
+                .andDo(print())
+                .andExpect(status().is2xxSuccessful());
     }
 
     @Test
@@ -89,27 +101,20 @@ public class ConvertTest {
     }
 
     @Test
-    public void byteCompare() throws Throwable {
-        File origin = new File("C:/easyConv/resources/output/2021/01/18/error.html.pdf");
-        File origin2 = new File("C:/easyConv/resources/output/2021/01/18/error.html.pdf");
-        File damaged = new File("C:/easyConv/resources/output/2021/01/18/z.pdf");
-
-        byte[] o = Files.toByteArray(origin);
-        byte[] o2 = Files.toByteArray(origin2);
-        byte[] d = Files.toByteArray(damaged);
-
-        log.info("o == d? {}", Arrays.equals(o, o2));
+    public void 프로바이더_테스트() throws Throwable {
+        convertConverter.of(multipartFile);
     }
 
     @Test
-    public void 엑셀_pdf_변환_테스트() throws Throwable {
-        File file = new File(SAMPLE_PATH, fileName);
-        MockMultipartFile multipartFile = new MockMultipartFile("multipartFile"
-                , fileName
-                , MediaType.MULTIPART_FORM_DATA_VALUE
-                , new FileInputStream(file));
+    public void 엑셀테스트() throws Throwable {
+        Workbook workbook = new Workbook(filePath);
 
-        pdfConvertService.createPdf(multipartFile);
+        String baseName = FileNameUtils.getBaseName(fileName);
+        File file = FileUtils.getOutputFile(null, baseName);
+        workbook.save(file.getAbsolutePath(), SaveFormat.PDF);
+    }
 
+    @Test
+    public void 워드테스트() throws Throwable {
     }
 }
