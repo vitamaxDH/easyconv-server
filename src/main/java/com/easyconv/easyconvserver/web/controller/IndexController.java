@@ -29,7 +29,7 @@ public class IndexController {
     }
 
     @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<GenericResourceDto> convert(@RequestBody MultipartFile multipartFile, HttpServletRequest req, HttpServletResponse res) throws Throwable {
+    public ResponseEntity<String> convert(@RequestBody MultipartFile multipartFile, HttpServletRequest req, HttpServletResponse res) throws Throwable {
         log.info("convertAndSend :: multipartFile {}", multipartFile);
 
         if (ObjectUtils.isEmpty(multipartFile)){
@@ -39,8 +39,8 @@ public class IndexController {
                                                     .multipartFile(multipartFile)
                                                     .ip(WebUtils.getIp(req))
                                                     .build();
-            dto = pdfConvertService.convert(dto);
-            return ResponseEntity.ok(dto);
+            pdfConvertService.convert(dto);
+            return ResponseEntity.ok("OK");
         }
     }
 

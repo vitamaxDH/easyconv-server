@@ -1,8 +1,7 @@
 package com.easyconv.easyconvserver.core.conversion.service;
 
-import com.aspose.words.Document;
-import com.aspose.words.SaveFormat;
-import com.easyconv.easyconvserver.core.util.FileUtils;
+import com.aspose.slides.Presentation;
+import com.aspose.slides.SaveFormat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -13,13 +12,13 @@ import java.io.InputStream;
 @Slf4j
 @Service
 @Scope("prototype")
-public class WordConverter implements Convertible {
+public class SlidesConverter implements Convertible {
 
     @Override
-    public String convert(InputStream is, File outputFile) throws Exception {
+    public String convert(InputStream is, File outputFile) {
+        Presentation prest = new Presentation(is);
         String outputPath = outputFile.getAbsolutePath();
-        Document document = new Document(is);
-        document.save(outputPath, SaveFormat.PDF);
+        prest.save(outputPath, SaveFormat.Pdf);
         log.info("convert :: outputPath : {}" ,outputPath);
         return outputPath;
     }

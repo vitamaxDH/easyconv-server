@@ -22,7 +22,7 @@ public class PdfConvertService {
 
     private final PdfResourceRepository pdfResourceRepository;
     private final ConvertHistoryRepository convertHistoryRepository;
-    private final ConverterProvider converterProvider;
+    private final ConverterFactory converterFactory;
 
     public GenericResourceDto convert(GenericResourceDto dto) throws Throwable {
         return convert(dto, null);
@@ -32,10 +32,8 @@ public class PdfConvertService {
         log.info("convert :: START");
         MultipartFile inputFile = dto.getMultipartFile();
         File outputFile = FileUtils.getOutputFile(outputPath, inputFile.getOriginalFilename());
-        log.info("convert :: outputFile {}", outputFile.getAbsolutePath());
-        String extension = FileNameUtils.getExtension(inputFile.getOriginalFilename());
-        Convertible converter = converterProvider.of(inputFile);
 
+        Convertible converter = converterFactory.of(inputFile);
         converter.convert(inputFile);
 
         if (true){
