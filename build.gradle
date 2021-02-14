@@ -33,7 +33,7 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
 
     // 변환을 위한 의존성
-    compile group: 'org.apache.pdfbox', name: 'pdfbox-tools', version: '2.0.19'
+    compile group: 'org.apache.pdfbox', name: 'pdfbox-tools', version: '2.0.22'
     compile group: 'net.sf.cssbox', name: 'pdf2dom', version: '1.9'
     compile group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13.2'
     compile group: 'org.apache.poi', name: 'poi-scratchpad', version: '4.1.2'
@@ -47,7 +47,10 @@ dependencies {
 
     /* aspose */
     compile group: 'com.aspose', name: 'aspose-cells', version: '21.2'
-    compile group: 'com.aspose', name: 'aspose-words', version: '18.7', classifier: 'android.via.java'
+    compile group: 'com.aspose', name: 'aspose-words', version: '20.5', classifier: 'jdk17'
+    compile group: 'com.aspose', name: 'aspose-html', version: '20.9.1', classifier: 'jdk16'
+    compile group: 'com.aspose', name: 'aspose-slides', version: '21.1', classifier: 'jdk16'
+
 }
 
 test {
