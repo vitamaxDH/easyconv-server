@@ -18,14 +18,13 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
-public class IndexController {
+public class IndexController extends BaseController {
 
     private final PdfConvertService pdfConvertService;
 
     @GetMapping("/index")
-    public String index(){
-        return "Server is on";
+    public ResponseEntity<Boolean> index(){
+        return ResponseEntity.ok(Boolean.TRUE);
     }
 
     @PostMapping(value = "/convert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -46,7 +45,6 @@ public class IndexController {
 
     @GetMapping(value = "/file/{fileId}")
     public ResponseEntity<Resource> download(@PathVariable Long fileId, HttpServletRequest req, HttpServletResponse res){
-
 
         return null;
     }
