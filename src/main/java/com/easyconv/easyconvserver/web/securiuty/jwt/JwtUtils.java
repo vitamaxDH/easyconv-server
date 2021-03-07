@@ -6,7 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 
@@ -32,14 +34,13 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
+    public String getUserNameFromJwtToken(Jws<Claims> jws) {
+        return jws.getBody().getSubject();
     }
 
-    public boolean validateJwtToken(String authToken) {
+    public Jws<Claims> validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            return true;
+            return getParsedJwt(authToken);
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
         } catch (MalformedJwtException e) {
@@ -52,6 +53,20 @@ public class JwtUtils {
             log.error("JWT claims string is empty: {}", e.getMessage());
         }
 
-        return false;
+        return null;
+    }
+
+    private Jws<Claims> getParsedJwt(String token){
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+    }
+
+    public String parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return headerAuth.substring(7);
+        }
+
+        return null;
     }
 }
