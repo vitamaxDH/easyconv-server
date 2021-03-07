@@ -32,6 +32,13 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
 
+    // https://mvnrepository.com/artifact/org.hibernate/hibernate-validator
+    implementation group: 'org.hibernate', name: 'hibernate-validator', version: '6.0.13.Final'
+    // https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+
+
+
     // 변환을 위한 의존성
     compile group: 'org.apache.pdfbox', name: 'pdfbox-tools', version: '2.0.22'
     compile group: 'net.sf.cssbox', name: 'pdf2dom', version: '1.9'
