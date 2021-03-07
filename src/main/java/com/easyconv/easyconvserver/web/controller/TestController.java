@@ -1,29 +1,32 @@
 package com.easyconv.easyconvserver.web.controller;
 
-import com.easyconv.easyconvserver.config.Config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-public class TestController {
+public class TestController extends BaseController{
 
-
-    @GetMapping("/test")
-    public String test(){
-        return "OK";
+    @GetMapping("/all")
+    public String allAccess(){
+        return "Public Content.";
     }
 
-    @GetMapping("/prop/{key}")
-    public ResponseEntity<?> getPropertyValue(@PathVariable String key){
-
-        String value = Config.getProperty(key);
-
-        return ResponseEntity.ok(value);
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public String userAccess(){
+        return "User Content.";
     }
+
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String adminAccess(){
+        return "Admin Content.";
+    }
+
 }
+

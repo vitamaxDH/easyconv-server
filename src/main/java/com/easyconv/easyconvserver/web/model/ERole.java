@@ -1,6 +1,6 @@
 package com.easyconv.easyconvserver.web.model;
 
-public enum RoleType {
+public enum ERole {
     ROLE_USER,
     ROLE_ADMIN
 }

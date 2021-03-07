@@ -43,7 +43,7 @@ public class ConvertTest {
     private static final Logger log = LoggerFactory.getLogger(ConvertTest.class);
 
     final String SAMPLE_PATH = "C:/easyConv/resources/input/";
-    String fileName = "error.html";
+    String fileName = "dec.pptx";
     String filePath = SAMPLE_PATH + fileName;
     String pdfPath = SAMPLE_PATH + "3.pdf";
 

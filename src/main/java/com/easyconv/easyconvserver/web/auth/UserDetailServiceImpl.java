@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 // principalDetails 객체를 반환해주기 위해 오버라이드
 @Service
 @AllArgsConstructor
-public class PrincipalDetailsService implements UserDetailsService {
+public class UserDetailServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -22,10 +22,9 @@ public class PrincipalDetailsService implements UserDetailsService {
     // 함수 종료시 @AuthenticationPrincipal 이 만들어진다
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User userEntity = userRepository.findByUsername(username);
-        if (userEntity != null) {
-            return new PrincipalDetails(userEntity);
-        }
-        return null;
+        User user = userRepository.findByUsername(username)
+                    .orElseThrow(()-> new UsernameNotFoundException("User Not Found with username: " + username));
+
+        return UserDetailsImpl.build(user);
     }
 }

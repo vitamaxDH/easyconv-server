@@ -7,5 +7,4 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @Controller
 @RequestMapping("/api")
-public class BaseController {
-}
+public class BaseController {}
