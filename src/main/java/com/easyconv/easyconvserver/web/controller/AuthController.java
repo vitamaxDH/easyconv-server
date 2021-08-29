@@ -9,7 +9,7 @@ import com.easyconv.easyconvserver.web.payload.request.SignupRequest;
 import com.easyconv.easyconvserver.web.payload.response.JwtResponse;
 import com.easyconv.easyconvserver.web.payload.response.MessageResponse;
 import com.easyconv.easyconvserver.web.repository.RoleRepository;
-import com.easyconv.easyconvserver.web.securiuty.jwt.JwtUtils;
+import com.easyconv.easyconvserver.web.security.jwt.JwtUtils;
 import com.easyconv.easyconvserver.web.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

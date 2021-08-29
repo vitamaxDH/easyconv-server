@@ -1,8 +1,8 @@
 package com.easyconv.easyconvserver.config;
 
 import com.easyconv.easyconvserver.web.auth.UserDetailsServiceImpl;
-import com.easyconv.easyconvserver.web.securiuty.jwt.AuthEntryPointJwt;
-import com.easyconv.easyconvserver.web.securiuty.jwt.AuthTokenFilter;
+import com.easyconv.easyconvserver.web.security.jwt.AuthEntryPointJwt;
+import com.easyconv.easyconvserver.web.security.jwt.AuthTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

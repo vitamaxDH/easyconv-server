@@ -1,7 +1,7 @@
 package com.easyconv.easyconvserver.web.controller;
 
-import com.easyconv.easyconvserver.core.conversion.service.PdfConvertService;
-import com.easyconv.easyconvserver.core.dto.GenericResourceDto;
+import com.easyconv.easyconvserver.core.domain.service.pdf.PdfConvertService;
+import com.easyconv.easyconvserver.core.dto.BaseResourceDto;
 import com.easyconv.easyconvserver.core.util.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class IndexController extends BaseController {
         if (ObjectUtils.isEmpty(multipartFile)){
             return ResponseEntity.badRequest().body(null);
         } else {
-            GenericResourceDto dto = GenericResourceDto.builder()
+            BaseResourceDto dto = BaseResourceDto.builder()
                                                     .multipartFile(multipartFile)
                                                     .ip(WebUtils.getIp(req))
                                                     .build();

@@ -1,4 +1,4 @@
-package com.easyconv.easyconvserver.web.securiuty.jwt;
+package com.easyconv.easyconvserver.web.security.jwt;
 
 import com.easyconv.easyconvserver.web.auth.UserDetailsImpl;
 import io.jsonwebtoken.*;
