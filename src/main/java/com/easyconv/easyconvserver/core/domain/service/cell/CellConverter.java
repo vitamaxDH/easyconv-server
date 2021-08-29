@@ -1,9 +1,9 @@
-package com.easyconv.easyconvserver.core.conversion.service;
+package com.easyconv.easyconvserver.core.domain.service.cell;
 
 import com.aspose.cells.SaveFormat;
 import com.aspose.cells.Workbook;
+import com.easyconv.easyconvserver.core.domain.service.Convertible;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -11,7 +11,6 @@ import java.io.InputStream;
 
 @Slf4j
 @Service
-@Scope("prototype")
 public class CellConverter implements Convertible {
 
     @Override
@@ -19,7 +18,7 @@ public class CellConverter implements Convertible {
         String outputPath = outputFile.getAbsolutePath();
         Workbook workbook = new Workbook(is);
         workbook.save(outputPath, SaveFormat.PDF);
-        log.info("convert :: outputPath : {}" ,outputPath);
+        log.info("convert :: outputPath : {}", outputPath);
         return outputPath;
     }
 }

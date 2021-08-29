@@ -1,6 +1,8 @@
-package com.easyconv.easyconvserver.core.conversion.service;
+package com.easyconv.easyconvserver.core.domain.service.pdf;
 
-import com.easyconv.easyconvserver.core.dto.GenericResourceDto;
+import com.easyconv.easyconvserver.core.domain.service.ConverterProvider;
+import com.easyconv.easyconvserver.core.domain.service.Convertible;
+import com.easyconv.easyconvserver.core.dto.BaseResourceDto;
 import com.easyconv.easyconvserver.core.entity.ConvertHistory;
 import com.easyconv.easyconvserver.core.entity.PdfResource;
 import com.easyconv.easyconvserver.core.repository.ConvertHistoryRepository;
@@ -8,7 +10,6 @@ import com.easyconv.easyconvserver.core.repository.PdfResourceRepository;
 import com.easyconv.easyconvserver.core.util.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.utils.FileNameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,26 +23,26 @@ public class PdfConvertService {
 
     private final PdfResourceRepository pdfResourceRepository;
     private final ConvertHistoryRepository convertHistoryRepository;
-    private final ConverterFactory converterFactory;
+    private final ConverterProvider converterProvider;
 
-    public GenericResourceDto convert(GenericResourceDto dto) throws Throwable {
+    public BaseResourceDto convert(BaseResourceDto dto) throws Throwable {
         return convert(dto, null);
     }
 
-    public GenericResourceDto convert(GenericResourceDto dto, String outputPath) throws Throwable {
+    public BaseResourceDto convert(BaseResourceDto dto, String outputPath) throws Throwable {
         log.info("convert :: START");
         MultipartFile inputFile = dto.getMultipartFile();
         File outputFile = FileUtils.getOutputFile(outputPath, inputFile.getOriginalFilename());
 
-        Convertible converter = converterFactory.of(inputFile);
+        Convertible converter = converterProvider.of(inputFile);
         converter.convert(inputFile);
 
-        if (true){
+        if (true) {
             dto.setConvertedFile(outputFile);
-            PdfResource resource = PdfResource.create().mapDtoToEntity(dto);
+            PdfResource resource = PdfResource.create().toEntity(dto);
             ConvertHistory convertHistory = ConvertHistory.builder()
-                                                          .clientIp(dto.getIp())
-                                                          .build();
+                    .clientIp(dto.getIp())
+                    .build();
             pdfResourceRepository.save(resource);
             convertHistoryRepository.save(convertHistory);
         }

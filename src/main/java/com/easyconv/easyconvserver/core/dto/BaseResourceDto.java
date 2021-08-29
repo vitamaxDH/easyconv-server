@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenericResourceDto implements Serializable {
+public class BaseResourceDto implements Serializable {
 
     private static final long serialVersionUID = 8214370405210237516L;
     private MultipartFile multipartFile;

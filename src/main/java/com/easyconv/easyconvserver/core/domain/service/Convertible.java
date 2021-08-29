@@ -1,4 +1,4 @@
-package com.easyconv.easyconvserver.core.conversion.service;
+package com.easyconv.easyconvserver.core.domain.service;
 
 import com.easyconv.easyconvserver.core.util.FileUtils;
 import org.apache.commons.compress.utils.FileNameUtils;
@@ -13,10 +13,6 @@ public interface Convertible {
     default void convert(MultipartFile inputFile) throws Exception {
         File outputFile = FileUtils.getOutputFile(null, inputFile.getOriginalFilename());
         String pdfPath = convert(inputFile.getInputStream(), outputFile);
-    }
-
-    default String convert(String inputFilePath) throws Exception {
-        return convert(inputFilePath, null);
     }
 
     default String convert(String inputFilePath, String outputFilePath) throws Exception {

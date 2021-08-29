@@ -1,4 +1,4 @@
-package com.easyconv.easyconvserver.core.conversion.service;
+package com.easyconv.easyconvserver.core.domain.service;
 
 import com.easyconv.easyconvserver.core.entity.PdfResource;
 import com.easyconv.easyconvserver.core.repository.PdfResourceRepository;
@@ -25,7 +25,7 @@ public class DownloadService {
 
     public ResponseEntity download(String fileId) throws Exception {
         PdfResource resource = pdfResourceRepository.findById(fileId)
-                                                    .orElseThrow(()-> new Exception("The file does not exist."));
+                .orElseThrow(() -> new Exception("The file does not exist."));
 
         File file = new File(resource.getFullPath());
         FileInputStream fis = new FileInputStream(file);
@@ -38,7 +38,7 @@ public class DownloadService {
         }
 
         // Fallback to the default content type if type could not be determined
-        if(contentType == null) {
+        if (contentType == null) {
             contentType = MimeTypeUtils.APPLICATION_OCTET_STREAM_VALUE + MimeTypeUtils.CHARSET_UTF_8;
         }
 

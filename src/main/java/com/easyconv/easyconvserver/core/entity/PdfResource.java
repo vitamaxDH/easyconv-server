@@ -1,6 +1,6 @@
 package com.easyconv.easyconvserver.core.entity;
 
-import com.easyconv.easyconvserver.core.dto.GenericResourceDto;
+import com.easyconv.easyconvserver.core.dto.BaseResourceDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -37,7 +37,7 @@ public class PdfResource {
         return new PdfResource();
     }
 
-    public PdfResource mapDtoToEntity(GenericResourceDto dto){
+    public PdfResource toEntity(BaseResourceDto dto){
         File file = dto.getConvertedFile();
         this.id = UUID.randomUUID().toString();
         this.fileName = file.getName();
