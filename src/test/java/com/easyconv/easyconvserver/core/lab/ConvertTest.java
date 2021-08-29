@@ -1,9 +1,9 @@
 package com.easyconv.easyconvserver.core.lab;
 
 import com.easyconv.easyconvserver.EasyConvServerApplication;
-import com.easyconv.easyconvserver.core.conversion.service.ConverterFactory;
-import com.easyconv.easyconvserver.core.conversion.service.Convertible;
-import com.easyconv.easyconvserver.core.conversion.service.PdfConvertService;
+import com.easyconv.easyconvserver.core.domain.service.ConverterProvider;
+import com.easyconv.easyconvserver.core.domain.service.Convertible;
+import com.easyconv.easyconvserver.core.domain.service.pdf.PdfConvertService;
 import com.easyconv.easyconvserver.core.util.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ public class ConvertTest {
     @Autowired
     private PdfConvertService pdfConvertService;
     @Autowired
-    ConverterFactory converterFactory;
+    ConverterProvider converterProvider;
 
     File file;
     MockMultipartFile multipartFile;
@@ -66,7 +66,7 @@ public class ConvertTest {
                 , fileName
                 , MediaType.MULTIPART_FORM_DATA_VALUE
                 , new FileInputStream(file));
-        convertible = converterFactory.of(multipartFile);
+        convertible = converterProvider.of(multipartFile);
     }
 
     @Test
