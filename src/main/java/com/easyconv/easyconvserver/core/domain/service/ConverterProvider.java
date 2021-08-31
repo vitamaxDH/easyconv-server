@@ -1,7 +1,7 @@
 package com.easyconv.easyconvserver.core.domain.service;
 
 import com.easyconv.easyconvserver.core.domain.type.FormatType;
-import com.easyconv.easyconvserver.core.exception.ResultCode;
+import com.easyconv.easyconvserver.core.exception.type.ResultCode;
 import com.easyconv.easyconvserver.core.exception.UnsupportedFormatException;
 import com.easyconv.easyconvserver.core.util.BeanContext;
 import lombok.extern.slf4j.Slf4j;

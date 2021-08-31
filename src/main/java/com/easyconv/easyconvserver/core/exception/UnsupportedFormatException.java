@@ -1,5 +1,7 @@
 package com.easyconv.easyconvserver.core.exception;
 
+import com.easyconv.easyconvserver.core.exception.type.ResultCode;
+
 public class UnsupportedFormatException extends RuntimeException {
 
     public UnsupportedFormatException() {

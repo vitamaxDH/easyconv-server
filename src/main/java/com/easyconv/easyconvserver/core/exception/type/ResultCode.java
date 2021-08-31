@@ -1,4 +1,4 @@
-package com.easyconv.easyconvserver.core.exception;
+package com.easyconv.easyconvserver.core.exception.type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
