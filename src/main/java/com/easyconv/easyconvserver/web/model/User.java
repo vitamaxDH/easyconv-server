@@ -1,6 +1,5 @@
 package com.easyconv.easyconvserver.web.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Builder
 @Entity
-@AllArgsConstructor
 @RequiredArgsConstructor
 @Table( name = "user",
         uniqueConstraints = {
@@ -25,6 +22,17 @@ import java.util.Set;
         }
 )
 public class User {
+
+    @Builder
+    public User(Long id, String username, String email, String password, Set<Role> roles, Timestamp createDate) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.roles = roles;
+        this.createDate = createDate;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

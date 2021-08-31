@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@Builder
 @NoArgsConstructor
 public class Response<T>{
 
@@ -16,6 +15,14 @@ public class Response<T>{
     protected String resultMessage;
     protected LocalDateTime systemDt = LocalDateTime.now();
     private T data;
+
+    @Builder
+    public Response(String resultCode, String resultMessage, LocalDateTime systemDt, T data) {
+        this.resultCode = resultCode;
+        this.resultMessage = resultMessage;
+        this.systemDt = systemDt;
+        this.data = data;
+    }
 
     public static Response create(){
         return new Response();
